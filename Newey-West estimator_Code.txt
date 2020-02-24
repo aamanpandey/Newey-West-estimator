@@ -1,0 +1,78 @@
+import numpy as np
+
+class A1:
+    def x1():
+        #creating x dataset with 1000 random numbers
+        np.random.seed(123)
+        n = 10
+        x = np.random.normal(size=(n,2))
+        ones = np.ones((n,1))
+        x = np.hstack([ones,x])
+        print("x")
+        print(x)
+        return x
+    def y1():
+        #creating y dataset with 1000 random numbers
+        np.random.seed(123)
+        n = 10
+        y = np.random.normal(size=(n,1))
+        print("y")
+        print(y)
+        return y
+    def b():
+        x=A1.x1()
+        y=A1.y1()
+        xx = x.T@x 
+        xy = x.T@y
+        b = np.linalg.solve(xx,xy)
+        print("b")
+        print(b)
+        return(b)
+        
+class B1:
+    def e1():
+        b=A1.b()
+        x=A1.x1()
+        y=A1.y1()
+        e = y-x@b
+        print("e")
+        print(e)
+        return(e)
+
+    def R():
+        e= B1.e1()
+        v= e.var()
+        x=A1.x1()
+        I=np.eye(x.shape[0])
+        R= v*I
+        sd1=0
+        for i in range(1,e.shape[0]):
+            sd1=sd1+(e[i]*e[i-1])     
+        sd1=sd1/x.shape[0]
+        j=R.shape[1]
+        R[0][1]=sd1
+        R[R.shape[0]-1][R.shape[1]-2]=sd1
+        for i in range(1,R.shape[0]):
+            for j in range(1,R.shape[1]-1):
+                if R[i][j]==v:
+                    R[i][j+1]=sd1
+                    R[i][j-1]=sd1
+                    break
+        print("r")
+        print(R)
+        return R
+
+class main1:
+    def __main__():
+        x=A1.x1()
+        R=B1.R()
+        a=x.T@x
+        b=x.T@R
+        c=b@x
+        a_inv=np.linalg.inv(a)
+        d=a_inv@c
+        e1=d@a_inv
+        print("Newey-West estimator:")
+        print(e1)
+        
+main1.__main__()
